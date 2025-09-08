@@ -1,21 +1,19 @@
+import cv2
+import numpy as np
 from fastapi import FastAPI, File, UploadFile
-from PIL import Image
-from pyzbar.pyzbar import decode
-import io
 
 app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"message": "FastAPI is working!"}
 
 @app.post("/decode-qr")
 async def decode_qr(file: UploadFile = File(...)):
     image_bytes = await file.read()
-    image = Image.open(io.BytesIO(image_bytes))
-    qr_data = decode(image)
+    np_arr = np.frombuffer(image_bytes, np.uint8)
+    img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-    if not qr_data:
+    detector = cv2.QRCodeDetector()
+    data, _, _ = detector.detectAndDecode(img)
+
+    if not data:
         return {"result": "No QR code found"}
 
-    return {"result": qr_data[0].data.decode("utf-8")}
+    return {"result": data}
