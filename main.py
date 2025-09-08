@@ -17,3 +17,7 @@ async def decode_qr(file: UploadFile = File(...)):
         return {"result": "No QR code found"}
 
     return {"result": data}
+
+@app.get("/debug")
+def debug():
+    return {"routes": [route.path for route in app.routes]}
