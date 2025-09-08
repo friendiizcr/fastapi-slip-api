@@ -19,9 +19,11 @@ async def decode_qr(file: UploadFile = File(...)):
     data, _, _ = detector.detectAndDecode(img)
     qr_result = data if data else "No QR code found"
 
-    # ✅ OCR ด้วย pytesseract
-    pil_image = Image.open(io.BytesIO(image_bytes))
-    ocr_text = pytesseract.image_to_string(pil_image, lang='eng+tha')
+    # ✅ OCR แบบปรับภาพให้ชัดขึ้น
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    enhanced = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)[1]
+    pil_image = Image.fromarray(enhanced)
+    ocr_text = pytesseract.image_to_string(pil_image, lang='tha+eng')
 
     return {
         "qr_result": qr_result,
