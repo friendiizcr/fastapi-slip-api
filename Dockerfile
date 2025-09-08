@@ -1,7 +1,7 @@
 FROM python:3.10
 
 # ✅ ติดตั้ง Tesseract OCR และ libGL สำหรับ OpenCV
-RUN apt-get update && apt-get install -y tesseract-ocr libgl1
+RUN apt-get update && apt-get install -y tesseract-ocr libgl1 tesseract-ocr-tha
 
 WORKDIR /app
 COPY . /app
